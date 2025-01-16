@@ -9,7 +9,9 @@ import sdk, {
 
 import { config } from "~/components/providers/WagmiProvider";
 import { PurpleButton } from "~/components/ui/PurpleButton";
+import { Button } from "~/components/ui/button";
 import { truncateAddress } from "~/lib/truncateAddress";
+import { GALLERY_IMAGES } from "~/lib/constants";
 import { base, optimism } from "wagmi/chains";
 import { useSession } from "next-auth/react";
 import { createStore } from "mipd";
@@ -25,6 +27,7 @@ export default function Frame(
   const [added, setAdded] = useState(false);
 
   const [addFrameResult, setAddFrameResult] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const addFrame = useCallback(async () => {
     try {
@@ -118,6 +121,39 @@ export default function Frame(
     >
       <div className="w-[300px] mx-auto py-2 px-2">
         <h1 className="text-2xl font-bold text-center mb-4">{title}</h1>
+        
+        <div className="relative">
+          <img 
+            src={GALLERY_IMAGES[currentImageIndex]}
+            alt={`Gallery image ${currentImageIndex + 1}`}
+            className="w-full h-auto rounded-lg mb-4"
+          />
+          
+          <div className="absolute inset-0 flex items-center justify-between px-2">
+            <Button
+              variant="ghost"
+              onClick={() => setCurrentImageIndex(prev => 
+                prev > 0 ? prev - 1 : GALLERY_IMAGES.length - 1
+              )}
+              className="bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8"
+            >
+              ←
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => setCurrentImageIndex(prev => 
+                prev < GALLERY_IMAGES.length - 1 ? prev + 1 : 0
+              )}
+              className="bg-black/50 hover:bg-black/70 text-white rounded-full w-8 h-8"
+            >
+              →
+            </Button>
+          </div>
+        </div>
+
+        <div className="text-center text-sm text-gray-500">
+          {currentImageIndex + 1} / {GALLERY_IMAGES.length}
+        </div>
       </div>
     </div>
   );
